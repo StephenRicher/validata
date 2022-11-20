@@ -11,7 +11,7 @@
 
 ## Installation
 ```bash
-pip install git+https://github.com/StephenRicher/datacrypt.git
+pip install git+https://github.com/StephenRicher/validata.git
 ```
 
 ## Python

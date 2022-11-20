@@ -31,7 +31,7 @@ setup(
     name='validata',
     author='Stephen Richer',
     author_email='stephen.richer@nhs.net',
-    url='https://github.com/nhsx/morbidity_network_analysis',
+    url='https://github.com/StephenRicher/validata',
     python_requires='>=3.8.0',
     install_requires=[
         'numpy',

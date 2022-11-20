@@ -9,6 +9,7 @@
 !README_files/*
 !Dockerfile
 !.dockerignore
+!*.yaml
 
 # ...even if they are in subdirectories
 !*/
