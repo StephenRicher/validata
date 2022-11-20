@@ -1,5 +1,7 @@
 # Validata - Utility for error checking
 
+![build: status](https://github.com/StephenRicher/validata/actions/workflows/tests.yaml/badge.svg)
+
 ## Table of contents
   * [Installation](#installation)
     * [Docker](#docker)

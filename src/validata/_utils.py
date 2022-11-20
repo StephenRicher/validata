@@ -107,7 +107,7 @@ def error_check(
     eventErrors = _getEventMisorder(data, error)
     numericOutliers = _getNumericOutliers(data, outlier)
     spellingErrors = _getMispelling(data, error)
-    return dict(eventErrors | numericOutliers | spellingErrors)
+    return {**eventErrors, **numericOutliers, **spellingErrors}
 
 
 def _estimateDependence(data: pd.DataFrame, error: float = 0.01):
@@ -140,7 +140,7 @@ def _getEventMisorder(
         msg = f'Misordered event: "{t1}" after "{t2}"'
         for idx in idxs:
             errors[idx].append(msg)
-    return errors
+    return dict(errors)
 
 
 def _assessOutlier(x):
@@ -176,7 +176,7 @@ def _getNumericOutliers(data: pd.DataFrame, threshold: float = 3):
             else:
                 msg += f'{val} > Q3 + (IQR * {outlier:.2f})'
             errors[idx].append(msg)
-    return errors
+    return dict(errors)
 
 
 def _assessMispelling(
@@ -207,4 +207,4 @@ def _getMispelling(
             msg = f'Mispelling in "{col}": ("{mispelled}" -> "{ref}")'
             for idx in idxs:
                 errors[idx].append(msg)
-    return errors
+    return dict(errors)
