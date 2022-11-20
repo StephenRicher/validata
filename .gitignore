@@ -1,0 +1,17 @@
+# Ignore everything
+*
+# Except
+!LICENSE
+!.gitignore
+!*.md
+!*.py
+!*.sh
+!README_files/*
+!Dockerfile
+!.dockerignore
+
+# ...even if they are in subdirectories
+!*/
+
+.ipynb_checkpoints
+package_testing/
