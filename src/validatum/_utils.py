@@ -106,7 +106,7 @@ def _dateMistake(x, error: float = 0.01):
 
 
 def error_check(
-        data: pd.DataFrame, event_order: list[tuple] = None,
+        data: pd.DataFrame, event_order: list = None,
         exclude: list = None, error: float = 0.01, outlier: float = 3) -> dict:
     if (isinstance(event_order, tuple)
             and not isinstance(event_order[0], (tuple, list))):
@@ -124,7 +124,7 @@ def error_check(
     return {**eventErrors, **numericOutliers, **spellingErrors}
 
 
-def _removeExcluded(event_order: list[tuple], exclude: list = None):
+def _removeExcluded(event_order: list, exclude: list = None):
     """ Remove excluded columns from event_order_fix """
     event_order_fix = []
     for group in event_order:
@@ -134,7 +134,7 @@ def _removeExcluded(event_order: list[tuple], exclude: list = None):
 
 
 def _getEventMisorder(
-        data: pd.DataFrame, event_order: list[tuple] = None,
+        data: pd.DataFrame, event_order: list = None,
         error: float = 0.01, equal: bool = True):
     if event_order is None:
         dependence = _estimateDependence(data, error)
@@ -155,7 +155,7 @@ def _getEventMisorder(
     return dict(errors)
 
 
-def _getEventPairs(event_order: list[tuple]):
+def _getEventPairs(event_order: list):
     """ Process list of ordered events to pairs """
     dependence = []
     for group in event_order:
