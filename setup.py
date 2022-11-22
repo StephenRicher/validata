@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""" Setup file for validata. """
+""" Setup file for validatum. """
 
 # Note: To use the 'upload' functionality of this file, you must:
 #   $ pipenv install twine --dev
@@ -28,11 +28,11 @@ def get_info():
 
 
 setup(
-    name='validata',
+    name='validatum',
     author='Stephen Richer',
     author_email='stephen.richer@nhs.net',
     url='https://github.com/StephenRicher/validata',
-    python_requires='>=3.8.0',
+    python_requires='>=3.7.0',
     install_requires=[
         'numpy',
         'pandas'
@@ -54,7 +54,4 @@ setup(
     packages=find_namespace_packages(where='src'),
     package_dir={'': 'src'},
     zip_safe=False,
-    #cmdclass={
-    #    'upload': UploadCommand,
-    #}
 )

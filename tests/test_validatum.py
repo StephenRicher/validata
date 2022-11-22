@@ -5,7 +5,7 @@ import json
 import pytest
 import hashlib
 import tempfile
-from validata import simulate, error_check
+from validatum import simulate, error_check
 
 
 def verifyHash(data: dict, readSize: int = 4096):
