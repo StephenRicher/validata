@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+
+import logging
 import string
 import numpy as np
 import pandas as pd
@@ -8,6 +10,7 @@ from collections import defaultdict
 from datetime import timedelta, datetime
 from difflib import SequenceMatcher as SM
 
+logger = logging.getLogger(__name__)
 
 def simulate(
         size: int = 10_000, mistake: bool = False,
@@ -103,11 +106,63 @@ def _dateMistake(x, error: float = 0.01):
 
 
 def error_check(
-        data: pd.DataFrame, error: float = 0.01, outlier: float = 3) -> dict:
-    eventErrors = _getEventMisorder(data, error)
+        data: pd.DataFrame, event_order: list[tuple] = None,
+        exclude: list = None, error: float = 0.01, outlier: float = 3) -> dict:
+    if (isinstance(event_order, tuple)
+            and not isinstance(event_order[0], (tuple, list))):
+        logger.error(
+            'Expected event_order as a list of tuples, I will fix this.')
+        event_order = [event_order]
+    if exclude is not None:
+        cols = [col for col in data.columns if col not in exclude]
+        data = data[cols]
+        if event_order is not None:
+            event_order = _removeExcluded(event_order, exclude)
+    eventErrors = _getEventMisorder(data, event_order, error)
     numericOutliers = _getNumericOutliers(data, outlier)
     spellingErrors = _getMispelling(data, error)
     return {**eventErrors, **numericOutliers, **spellingErrors}
+
+
+def _removeExcluded(event_order: list[tuple], exclude: list = None):
+    """ Remove excluded columns from event_order_fix """
+    event_order_fix = []
+    for group in event_order:
+        fixed = tuple([event for event in group if event not in exclude])
+        event_order_fix.append(fixed)
+    return event_order_fix
+
+
+def _getEventMisorder(
+        data: pd.DataFrame, event_order: list[tuple] = None,
+        error: float = 0.01, equal: bool = True):
+    if event_order is None:
+        dependence = _estimateDependence(data, error)
+    else:
+        dependence = _getEventPairs(event_order)
+        print(dependence)
+    errors = defaultdict(list)
+    for t1, t2 in dependence:
+        if equal:
+            idxs = data.loc[data[t1] >= data[t2]].index
+        else:
+            idxs = data.loc[data[t1] > data[t2]].index
+        if idxs.empty:
+            continue
+        msg = f'Misordered event: "{t1}" after "{t2}"'
+        for idx in idxs:
+            errors[idx].append(msg)
+    return dict(errors)
+
+
+def _getEventPairs(event_order: list[tuple]):
+    """ Process list of ordered events to pairs """
+    dependence = []
+    for group in event_order:
+        for i, col1 in enumerate(group):
+            for col2 in group[i+1:]:
+                dependence.append((col1, col2))
+    return dependence
 
 
 def _estimateDependence(data: pd.DataFrame, error: float = 0.01):
@@ -123,24 +178,6 @@ def _estimateDependence(data: pd.DataFrame, error: float = 0.01):
         elif ratio > 1 - error:
             dependence.append((t2, t1))
     return dependence
-
-
-def _getEventMisorder(
-        data: pd.DataFrame, error: float = 0.01,
-        equal: bool = True):
-    dependence = _estimateDependence(data, error)
-    errors = defaultdict(list)
-    for t1, t2 in dependence:
-        if equal:
-            idxs = data.loc[data[t1] >= data[t2]].index
-        else:
-            idxs = data.loc[data[t1] > data[t2]].index
-        if idxs.empty:
-            continue
-        msg = f'Misordered event: "{t1}" after "{t2}"'
-        for idx in idxs:
-            errors[idx].append(msg)
-    return dict(errors)
 
 
 def _assessOutlier(x):
